@@ -1,18 +1,17 @@
-#Fraud Detection System for Financial Transactions 
+# Fraud Detection System for Financial Transactions 
 
-Title 
+## Title 
 
 Building a Real-Time Fraud Detection System for Financial Transactions 
 
-________________________________________________________________________________________________________________________
 
-Overview 
+## Overview 
 
 This project involves creating a real-time fraud detection system for financial transactions. The system continuously monitors transactions, detects suspicious patterns, and flags potential fraud in real-time. It utilizes advanced rule-based and statistical techniques to evaluate transaction data. The system also allows users to query flagged transactions and view detailed fraud reports. 
 
-________________________________________________________________________________________________________________________
 
-Objective 
+
+## Objective 
 
 Develop a robust fraud detection system to: 
 
@@ -24,9 +23,9 @@ Develop a robust fraud detection system to:
 
     - Scale to handle a high volume of transactions securely and efficiently. 
 
-________________________________________________________________________________________________________________________
 
-Key Features 
+
+## Key Features 
 
 Transaction Monitoring:  
 
@@ -72,9 +71,9 @@ Optional Features:
 
     - Persist flagged transactions to a database or file. 
 
-________________________________________________________________________________________________________________________
 
-Learning Goals 
+
+## Learning Goals 
 
     - Understand Rust’s concurrency primitives (Mutex, RwLock, channel) for high-frequency transaction monitoring. 
 
@@ -84,127 +83,109 @@ Learning Goals
 
     - Learn to scale the system for large datasets and high transaction volumes. 
 
-________________________________________________________________________________________________________________________
 
-Implementation Steps 
 
-Define Core Structures: 
+## Implementation Steps 
 
-Transaction:  
+    Define Core Structures: 
 
-id: u64: Unique transaction ID. 
+    Transaction:  
 
-account_id: u32: Account associated with the transaction. 
+        id: u64: Unique transaction ID. 
 
-amount: f64: Transaction amount. 
+        account_id: u32: Account associated with the transaction. 
 
-timestamp: u64: Unix timestamp of the transaction. 
+        amount: f64: Transaction amount. 
 
-origin_country: String: Country of transaction origin. 
+        timestamp: u64: Unix timestamp of the transaction. 
 
-ip_address: String: IP address of the transaction origin. 
+        origin_country: String: Country of transaction origin. 
 
-FlaggedTransaction:  
+        ip_address: String: IP address of the transaction origin. 
 
-Includes the transaction details and a reason: String field explaining why it was flagged. 
+    FlaggedTransaction:  
 
-________________________________________________________________________________________________________________________
+        Includes the transaction details and a reason: String field explaining why it was flagged. 
+<!-- *** -->
+    Example: 
 
-Example: 
 
-rust 
+    #[derive(Debug, Clone)] 
 
-Copy code 
+    struct Transaction { 
+        id: u64, 
+        account_id: u32, 
+        amount: f64, 
+        timestamp: u64, 
+        origin_country: String, 
+        ip_address: String, 
+    } 
 
-#[derive(Debug, Clone)] 
+    #[derive(Debug, Clone)] 
 
-struct Transaction { 
+    struct FlaggedTransaction { 
+        transaction: Transaction, 
+        reason: String, 
+    } 
+<!-- *** -->
 
-    id: u64, 
+    Concurrency Management: 
 
-    account_id: u32, 
+        - Use Mutex<Vec<Transaction>> for thread-safe storage of incoming transactions. 
 
-    amount: f64, 
+        - Use Mutex<Vec<FlaggedTransaction>> for storing flagged transactions. 
 
-    timestamp: u64, 
+    Fraud Detection Logic: 
 
-    origin_country: String, 
+        Implement predefined rules:  
 
-    ip_address: String, 
+            - Unusual Amount: Flag transactions exceeding a certain threshold. 
 
-} 
+            - High Frequency: Flag accounts with more than X transactions in Y seconds. 
 
- 
+            - Cross-Border Transactions: Flag transactions between specific countries. 
 
-#[derive(Debug, Clone)] 
+            - Flagged IPs: Use a list of known fraudulent IPs to flag transactions. 
 
-struct FlaggedTransaction { 
+    Real-Time Monitoring: 
 
-    transaction: Transaction, 
+        Use a producer-consumer model:  
 
-    reason: String, 
+            - Producer: Simulate incoming transactions and add them to a queue. 
 
-} 
+            - Consumer: Evaluate transactions against fraud detection rules and flag suspicious ones. 
 
- 
+    Querying Flagged Transactions: 
 
-Concurrency Management: 
+        Support queries to filter flagged transactions by:  
 
-Use Mutex<Vec<Transaction>> for thread-safe storage of incoming transactions. 
+            - Account ID. 
 
-Use Mutex<Vec<FlaggedTransaction>> for storing flagged transactions. 
+            - Suspicion reason. 
 
-Fraud Detection Logic: 
+            - Transaction timestamp or range. 
 
-Implement predefined rules:  
+            - Amount range. 
 
-Unusual Amount: Flag transactions exceeding a certain threshold. 
+    Fraud Reporting: 
 
-High Frequency: Flag accounts with more than X transactions in Y seconds. 
+        Generate summary reports with:  
 
-Cross-Border Transactions: Flag transactions between specific countries. 
+            - Total flagged transactions. 
 
-Flagged IPs: Use a list of known fraudulent IPs to flag transactions. 
+            - Breakdown by suspicion type (e.g., unusual amount, high frequency). 
 
-Real-Time Monitoring: 
+            - Account-wise and country-wise summaries. 
 
-Use a producer-consumer model:  
 
-Producer: Simulate incoming transactions and add them to a queue. 
 
-Consumer: Evaluate transactions against fraud detection rules and flag suspicious ones. 
+## Use Cases 
 
-Querying Flagged Transactions: 
-
-Support queries to filter flagged transactions by:  
-
-Account ID. 
-
-Suspicion reason. 
-
-Transaction timestamp or range. 
-
-Amount range. 
-
-Fraud Reporting: 
-
-Generate summary reports with:  
-
-Total flagged transactions. 
-
-Breakdown by suspicion type (e.g., unusual amount, high frequency). 
-
-Account-wise and country-wise summaries. 
-
-________________________________________________________________________________________________________________________
-
-Use Cases 
-
-Real-Time Fraud Detection:  
+### Real-Time Fraud Detection:  
 
 Monitor transactions dynamically and flag suspicious ones in real-time. 
 
-Query Flagged Transactions:  
+### Query Flagged Transactions:  
 
 By account: Retrieve all flagged transactions for a specific account. 
 
@@ -212,24 +193,20 @@ By suspicion type: Find transactions flagged for a specific rule violation.
 
 By time range: Retrieve flagged transactions within a specific timeframe. 
 
-Generate Fraud Reports:  
+### Generate Fraud Reports:  
 
 Summarize flagged transactions by suspicion type, country, and account. 
 
-Concurrency:  
+### Concurrency:  
 
 Process transactions from multiple accounts concurrently while ensuring thread safety. 
 
-________________________________________________________________________________________________________________________
+
 
 CLI Interaction 
 
 Simulating Transactions: 
-
-plaintext 
-
-Copy code 
-
+```
 > simulate_transactions 
 
 Simulating transactions... 
@@ -239,15 +216,12 @@ Transaction ID: 101 flagged: Unusual Amount - $50,000.00 from Account ID: 1
 Transaction ID: 102 flagged: High Frequency - 5 transactions within 10 seconds for Account ID: 2 
 
 Transaction ID: 103 flagged: Flagged IP - IP 192.168.1.10 for Account ID: 3 
-
+```
  
 
 Querying Flagged Transactions: 
 
-plaintext 
-
-Copy code 
-
+```
 > query_flagged_transactions account 1 
 
 Flagged Transactions for Account ID 1: 
@@ -261,15 +235,11 @@ Flagged Transactions for Account ID 1:
 Flagged Transactions for Reason "High Frequency": 
 
 [102] Amount: $1,000.00 | Account: 2 | Timestamp: 1670000050 
-
+```
  
 
 Viewing Fraud Reports: 
-
-plaintext 
-
-Copy code 
-
+```
 > generate_fraud_report 
 
 Fraud Report: 
@@ -297,62 +267,62 @@ Fraud Report:
   - USA: 6 flagged transactions 
 
   - Canada: 3 flagged transactions 
-
+```
  
 
-________________________________________________________________________________________________________________________
 
-Expected Outcomes 
 
-Fraud Detection:  
+## Expected Outcomes 
+
+### Fraud Detection:  
 
 Real-time flagging of suspicious transactions based on predefined rules. 
 
-Advanced Querying:  
+### Advanced Querying:  
 
 Flexible querying of flagged transactions for analysis. 
 
-Scalability:  
+### Scalability:  
 
 Efficient handling of large transaction volumes. 
 
-Concurrency:  
+### Concurrency:  
 
 Thread-safe processing of transactions and rule evaluation. 
 
-________________________________________________________________________________________________________________________
 
-Challenges 
 
-Concurrency:  
+## Challenges 
+
+### Concurrency:  
 
 Ensure thread-safe transaction monitoring and flagging. 
 
-Scalability:  
+### Scalability:  
 
 Design the system to handle increasing transaction volumes efficiently. 
 
-Dynamic Rules:  
+### Dynamic Rules:  
 
 Allow flexibility to add or modify fraud detection rules dynamically. 
 
-________________________________________________________________________________________________________________________
 
-Evaluation Criteria 
 
-Completeness:  
+## Evaluation Criteria 
+
+### Completeness:  
 
 Implementation of all fraud detection rules and query operations. 
 
-Concurrency:  
+### Concurrency:  
 
 Proper use of concurrency primitives for real-time processing. 
 
-Scalability:  
+### Scalability:  
 
 Efficient processing of large datasets and high transaction volumes. 
 
-User Experience:  
+### User Experience:  
 
 Intuitive CLI for simulating transactions, querying flagged transactions, and generating reports. 
 
